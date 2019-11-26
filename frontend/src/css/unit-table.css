@@ -1,0 +1,272 @@
+/*************************************************\
+
+                 table
+
+\*************************************************/
+/***审查报告=>犯罪嫌疑人基本信息****/
+.fd-table {
+  width: 100%;
+  max-width: 100%;
+    table-layout: fixed;
+}
+/*设置整个th，td的间距和字体*/
+.fd-table > thead > tr > th,
+.fd-table > tbody > tr > th,
+.fd-table > tfoot > tr > th,
+.fd-table > thead > tr > td,
+.fd-table > tbody > tr > td,
+.fd-table > tfoot > tr > td {
+  padding: 3px 10px;
+  color: #333;
+  font: 13px/30px SimSun;
+  vertical-align: middle;
+  border-right: 1px solid #e7e7e7;
+  border-bottom: 1px solid #e7e7e7;
+  background-color: #fff;
+  background-clip: padding-box;
+  /**第一列左边框线**/
+}
+.fd-table > thead > tr > th:first-child,
+.fd-table > tbody > tr > th:first-child,
+.fd-table > tfoot > tr > th:first-child,
+.fd-table > thead > tr > td:first-child,
+.fd-table > tbody > tr > td:first-child,
+.fd-table > tfoot > tr > td:first-child,
+.fd-table > thead > tr > th:first-child,
+.fd-table > tbody > tr > th:first-child,
+.fd-table > tfoot > tr > th:first-child,
+.fd-table > thead > tr > td:first-child,
+.fd-table > tbody > tr > td:first-child,
+.fd-table > tfoot > tr > td:first-child {
+  border-left: 1px solid #e7e7e7;
+}
+.fd-table > thead > tr > th.fd-tal,
+.fd-table > tbody > tr > th.fd-tal,
+.fd-table > tfoot > tr > th.fd-tal,
+.fd-table > thead > tr > td.fd-tal,
+.fd-table > tbody > tr > td.fd-tal,
+.fd-table > tfoot > tr > td.fd-tal {
+  text-align: left;
+}
+.fd-table > thead > tr > th.fd-tar,
+.fd-table > tbody > tr > th.fd-tar,
+.fd-table > tfoot > tr > th.fd-tar,
+.fd-table > thead > tr > td.fd-tar,
+.fd-table > tbody > tr > td.fd-tar,
+.fd-table > tfoot > tr > td.fd-tar {
+  text-align: right;
+}
+.fd-table > thead > tr > th.fd-tac,
+.fd-table > tbody > tr > th.fd-tac,
+.fd-table > tfoot > tr > th.fd-tac,
+.fd-table > thead > tr > td.fd-tac,
+.fd-table > tbody > tr > td.fd-tac,
+.fd-table > tfoot > tr > td.fd-tac {
+  text-align: center;
+}
+.fd-table > thead > tr > th.fd-td-gray-bj,
+.fd-table > tbody > tr > th.fd-td-gray-bj,
+.fd-table > tfoot > tr > th.fd-td-gray-bj,
+.fd-table > thead > tr > td.fd-td-gray-bj,
+.fd-table > tbody > tr > td.fd-td-gray-bj,
+.fd-table > tfoot > tr > td.fd-td-gray-bj,
+.fd-table > thead > tr > th.fd-td-label,
+.fd-table > tbody > tr > th.fd-td-label,
+.fd-table > tfoot > tr > th.fd-td-label,
+.fd-table > thead > tr > td.fd-td-label,
+.fd-table > tbody > tr > td.fd-td-label,
+.fd-table > tfoot > tr > td.fd-td-label {
+  background-color: #F0F2F5;
+}
+.fd-table > thead > tr > th.fd-td-gray-bj em,
+.fd-table > tbody > tr > th.fd-td-gray-bj em,
+.fd-table > tfoot > tr > th.fd-td-gray-bj em,
+.fd-table > thead > tr > td.fd-td-gray-bj em,
+.fd-table > tbody > tr > td.fd-td-gray-bj em,
+.fd-table > tfoot > tr > td.fd-td-gray-bj em,
+.fd-table > thead > tr > th.fd-td-label em,
+.fd-table > tbody > tr > th.fd-td-label em,
+.fd-table > tfoot > tr > th.fd-td-label em,
+.fd-table > thead > tr > td.fd-td-label em,
+.fd-table > tbody > tr > td.fd-td-label em,
+.fd-table > tfoot > tr > td.fd-td-label em {
+  color: #ff0000;
+}
+.fd-table > thead > tr > th.fd-td-label,
+.fd-table > tbody > tr > th.fd-td-label,
+.fd-table > tfoot > tr > th.fd-td-label,
+.fd-table > thead > tr > td.fd-td-label,
+.fd-table > tbody > tr > td.fd-td-label,
+.fd-table > tfoot > tr > td.fd-td-label {
+  text-align: center;
+  min-width: 110px;
+  width: 17.91530944625407%;
+}
+.fd-table > thead > tr > th.min-line,
+.fd-table > tbody > tr > th.min-line,
+.fd-table > tfoot > tr > th.min-line,
+.fd-table > thead > tr > td.min-line,
+.fd-table > tbody > tr > td.min-line,
+.fd-table > tfoot > tr > td.min-line {
+  padding: 2px 2px;
+  line-height: 15px;
+}
+.fd-table > thead > tr > th.two,
+.fd-table > tbody > tr > th.two,
+.fd-table > tfoot > tr > th.two,
+.fd-table > thead > tr > td.two,
+.fd-table > tbody > tr > td.two,
+.fd-table > tfoot > tr > td.two {
+  padding: 6px 2px;
+  line-height: 16px;
+}
+.fd-table > thead > tr > th.fd-nop,
+.fd-table > tbody > tr > th.fd-nop,
+.fd-table > tfoot > tr > th.fd-nop,
+.fd-table > thead > tr > td.fd-nop,
+.fd-table > tbody > tr > td.fd-nop,
+.fd-table > tfoot > tr > td.fd-nop {
+  padding: 0;
+}
+.fd-table > thead > tr > th.fd-td-placeholder,
+.fd-table > tbody > tr > th.fd-td-placeholder,
+.fd-table > tfoot > tr > th.fd-td-placeholder,
+.fd-table > thead > tr > td.fd-td-placeholder,
+.fd-table > tbody > tr > td.fd-td-placeholder,
+.fd-table > tfoot > tr > td.fd-td-placeholder {
+  border-left: none;
+  border-right: none;
+}
+/**顶边框线**/
+.fd-table {
+  border-top: 1px solid #e7e7e7;
+}
+.fd-table.no-bdt {
+  border-top: none;
+}
+/**标题顶边框线**/
+.fd-table > thead > tr > th,
+.fd-table > tbody > tr > th,
+.fd-table > tfoot > tr > th {
+  padding: 5px;
+  height: 48px;
+  color: #333;
+  line-height: 28px;
+  text-align: center;
+  vertical-align: middle;
+  white-space: nowrap;
+  background-color: #f5f7fa;
+}
+/**布局划分***/
+.fd-table > tbody > tr > td.fd-col-10,
+.fd-table > thead > tr > th.fd-col-10 {
+  width: 10%;
+}
+.fd-table > tbody > tr > td.fd-col-20,
+.fd-table > thead > tr > th.fd-col-20 {
+  width: 20%;
+}
+.fd-table > thead > tr > th.fd-col-01 {
+  width: 21.96969696969697%;
+}
+.fd-table > thead > tr > th.fd-col-02 {
+  width: 23.484848484848486%;
+}
+.fd-table > thead > tr > th.fd-col-03 {
+  width: 23.484848484848486%;
+}
+/**正常的input**/
+.fd-table > tbody > tr > td input[type=number],
+.fd-table > tbody > tr > td input[type=text] {
+  padding: 0 7px;
+  width: 100%;
+  height: 30px;
+  font: 13px/28px SumSun;
+  border: 1px solid transparent;
+  background-color: #fff;
+  /**划过状态下当前td下的input，和获得焦点的input**/
+}
+.fd-table > tbody > tr > td input[type=number]:focus,
+.fd-table > tbody > tr > td input[type=number]:hover,
+.fd-table > tbody > tr > td input[type=text]:focus,
+.fd-table > tbody > tr > td input[type=text]:hover {
+  border-color: #cbdff3;
+  box-shadow: inset 0 0 4px rgba(202, 225, 255, 0.75);
+}
+.fd-table > tbody > tr > td textarea,
+.fd-table > tbody > tr > td .fd-textarea-text {
+  position: relative;
+  z-index: 1;
+  display: block;
+  padding: 5px 7px;
+  width: 100%;
+  min-height: 60px;
+  overflow: auto;
+  font: 13px/24px Arial;
+  resize: none;
+  border: 1px solid transparent;
+  background-color: #fff;
+  /**划过状态下当前td下的input，和获得焦点的input**/
+}
+.fd-table > tbody > tr > td textarea:focus,
+.fd-table > tbody > tr > td .fd-textarea-text:focus,
+.fd-table > tbody > tr > td textarea:hover,
+.fd-table > tbody > tr > td .fd-textarea-text:hover {
+  border-color: #cbdff3;
+  box-shadow: inset 0 0 4px rgba(202, 225, 255, 0.75);
+}
+.fd-table > tbody > tr > td > .fd-textarea-wrap {
+  position: relative;
+  z-index: 2;
+  padding-right: 0;
+}
+.fd-table > tbody > tr > td > .fd-textarea-wrap > textarea {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 3;
+  height: 100%;
+}
+.fd-table > tbody > tr > td > .fd-textarea-wrap.min > textarea,
+.fd-table > tbody > tr > td > .fd-textarea-wrap.min > .fd-textarea-text {
+  min-height: 30px;
+}
+.fd-table > tbody > tr > td.disabled input[type=text]:focus,
+.fd-table > tbody > tr > td.disabled input[type=text]:hover {
+  border-color: transparent;
+  box-shadow: none;
+}
+/***可编辑的单元格*/
+.fd-table > tbody > tr > td.fd-edit {
+  padding: 2px;
+  vertical-align: middle;
+}
+.fd-table > tbody > tr > td.fd-edit > div {
+  position: relative;
+  /*width: 100%;*/
+  /*padding-right: 20px;*/
+  /**默认的颜色***/
+}
+.fd-table > tbody > tr > td.fd-edit > div.fd-operate {
+  padding-right: 0;
+  overflow: visible;
+}
+.fd-table > tbody > tr > td.fd-edit > div > .fd-icon-delete {
+  position: absolute;
+  top: 50%;
+  left: -24px;
+  z-index: 2;
+  -webkit-transform: translate(0, -50%);
+  -moz-transform: translate(0, -50%);
+  -ms-transform: translate(0, -50%);
+  -o-transform: translate(0, -50%);
+  transform: translate(0, -50%);
+}
+.fd-table > tbody > tr > td.fd-edit > div.fd-input-wrap,
+.fd-table > tbody > tr > td.fd-edit > div.fd-component-simple-dropdown {
+  padding-right: 0;
+}
+.fd-table > tbody > tr > td.fd-edit > div input {
+  color: #333;
+}
+

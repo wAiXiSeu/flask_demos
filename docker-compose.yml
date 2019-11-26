@@ -1,0 +1,56 @@
+version: '3'
+services:
+
+  backend:
+    container_name: backend-waixi
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "30080:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    env_file:
+      - .env
+#    depends_on:
+#      - mongo
+#      - redis
+    networks:
+      - net-yc
+
+  frontend:
+    container_name: frontend-waixi
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    networks:
+      - net-yc
+    ports:
+      - "30081:8080"
+    restart: always
+
+#  mongo:
+#    container_name: mongo_yc
+#    image: mongo:3.6
+#    ports:
+#      - "27017:27017"
+#    volumes:
+#      - "${MONGO_VOLUME}:/data/db"
+#    networks:
+#      - net-yc
+#    restart: always
+#
+#  redis:
+#    container_name: platform-redis
+#    image: redis:5.0
+#    ports:
+#      - "6379:6379"
+#    volumes:
+#      - "${REDIS_VOLUME}:/data"
+#    networks:
+#      - net-yc
+#    restart: always
+
+networks:
+  net-yc:
+    driver: bridge

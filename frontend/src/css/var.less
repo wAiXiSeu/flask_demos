@@ -1,0 +1,26 @@
+/* 全局变量 */
+// 菜单选择
+@menuActive: #003A8C;
+// 主题颜色
+@themeColor: #096DD9;
+// 主题颜色悬浮
+@themeColorOpacity: rgba(9, 109, 217, .1);
+// border颜色
+@borderColor: #E9E9E9;
+// 聚焦时候的border颜色
+@borderColorFocus: #409EFF;
+// placeholder颜色
+@placeholderColor: #C0C4CC;
+// 主题背景颜色
+@bgColor: #F0F2F5;
+
+/* 全局方法 */
+.clearBoth() {
+  &:after{
+    display: block;
+    content: '';
+    clear: both;
+    height: 0px;
+    visibility: hidden;
+  }
+}
