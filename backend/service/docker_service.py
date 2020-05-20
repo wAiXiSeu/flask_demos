@@ -10,7 +10,7 @@ import datetime
 
 import docker
 
-from core.exceptions import BusinessException
+from backend.core.exceptions import BusinessError
 
 docker_client = docker.from_env()
 
@@ -36,7 +36,7 @@ def list_docker_images():
 
 def delete_docker_images(image_id):
     if not image_id:
-        raise BusinessException("镜像ID为空")
+        raise BusinessError("镜像ID为空")
     try:
         docker_client.images.remove(image_id)
     except Exception as e:

@@ -3,14 +3,16 @@
 """
 __title__ = ''
 __author__ = 'wAIxi'
-__date__ = '2019-11-16'
+__date__ = '2019-12-30'
 __description__ = doc description
 """
+import datetime
 import functools
 import inspect
 import json
 import logging
 import os
+import threading
 import time
 import traceback
 from functools import wraps
@@ -19,13 +21,27 @@ from stat import ST_DEV, ST_INO
 
 from flask import request
 
-custom_log_dir = os.path.join(os.getenv("LOG_DIR", "./logs"))
+root_dir = os.getenv("ROOT_DIR") or os.path.join(os.path.dirname(__file__), "..")
+sub_dir = os.getenv('HOSTNAME') or datetime.datetime.now().strftime("%Y%m%d")
+custom_log_dir = os.path.join(root_dir, "logs", sub_dir)
+
+
+def init(app):
+    """整合 flask 与 gunicorn 的 logger"""
+    gunicorn_logger = logging.getLogger('gunicorn.error')
+    app.logger.handlers = gunicorn_logger.handlers
+    app.logger.setLevel(logging.DEBUG)
+    # 加一个日志
+    with threading.Lock():
+        if not os.path.exists(custom_log_dir):
+            os.makedirs(custom_log_dir)
 
 
 class TimeCostLogger(object):
     """
     时间花费装配器, 默认输出console 和 file
     """
+
     @staticmethod
     def time_cost(where: str):
         def _wraps(func):
@@ -34,7 +50,7 @@ class TimeCostLogger(object):
                 start = time.time()
                 res = func(*args, **kwargs)
                 cost = time.time() - start
-                get_logger("debug_info").info(json.dumps({
+                get_logger("simple").info(json.dumps({
                     "message_type": "rxTIME",
                     "where": where,
                     "cost": cost
@@ -50,38 +66,38 @@ class LocalLogger(object):
     """
     本地debug error 信息日志，输出默认为console 和 file
     """
+
     @staticmethod
-    def debug(msg, msg_type="rxDEBUG"):
+    def debug(msg, msg_type="rxDEBUG", **kwargs):
         """代码中可用此函数 debug, 代替 print"""
-        get_logger("debug_info").debug(json.dumps({
+        where = kwargs.pop("where") if "where" in kwargs else ""
+        get_logger("root").debug(json.dumps({
             "message_type": msg_type,
-            "message": msg
+            "message": msg,
+            "where": where,
+            "custom_params": kwargs
         }, ensure_ascii=False))
 
     @staticmethod
-    def error(error, msg_type="rxERROR"):
-        get_logger("debug_info").debug(json.dumps({
+    def error(error, msg_type="rxERROR", **kwargs):
+        where = kwargs.pop("where") if "where" in kwargs else ""
+        get_logger("error").error(json.dumps({
             "message_type": msg_type,
             "error_message": str(error),
+            "where": where,
+            "custom_params": kwargs,
             "error_stack": traceback.format_exc()
         }, ensure_ascii=False))
 
-
-class MiddleWareLogger(object):
-    """
-    中间件日志记录，e.g. redis rabbitmq 默认输出 file
-    """
     @staticmethod
-    def log_info(response, log_name="simple", **kwargs):
-        logger = get_logger(log_name)
-        params = kwargs.pop("params") if "params" in kwargs else ""
-        cost_time = kwargs.pop("cost_time") if "cost_time" in kwargs else ""
-        message_type = kwargs.pop("message_type") if "message_type" in kwargs else "redis"
+    def info(response, msg_type="rxINFO", **kwargs):
+        logger = get_logger("simple")
+        where = kwargs.pop("where") if "where" in kwargs else ""
         message = {
-            "message_type": message_type,
-            "params": params,
-            "results": response,
-            "cost_time(seconds)": cost_time
+            "message_type": msg_type,
+            "message": response,
+            "where": where,
+            "custom_params": kwargs
         }
         logger.info(json.dumps(message, ensure_ascii=False))
 
@@ -116,7 +132,7 @@ class ThirdPartyLogger(object):
         logger.info(json.dumps(message, ensure_ascii=False))
 
     @staticmethod
-    def log_error(error, log_name="simple", **kwargs):
+    def log_error(error, log_name="error", **kwargs):
         logger = get_logger(log_name)
         url = kwargs.pop("url") if "url" in kwargs else ""
         method = kwargs.pop("method") if "method" in kwargs else ""
@@ -170,6 +186,7 @@ class FlaskLogger(object):
     """
     flask日志记录 默认输出file
     """
+
     @staticmethod
     def log_info(response, log_name="simple", **kwargs):
         cost_time = kwargs.pop("cost_time") if "cost_time" in kwargs else ""
@@ -189,7 +206,7 @@ class FlaskLogger(object):
             logger.info(json.dumps(message, ensure_ascii=False))
 
     @staticmethod
-    def log_error(error, log_name="simple", **kwargs):
+    def log_error(error, log_name="error", **kwargs):
         logger = get_logger(log_name)
         message = {
             "message_type": "rxERROR",
@@ -213,9 +230,10 @@ class RxLogHandler(handlers.WatchedFileHandler, handlers.TimedRotatingFileHandle
         self._statstream()
 
     def _open(self):
-        dir_path = os.path.dirname(self.baseFilename)
-        if not os.path.exists(dir_path):
-            os.makedirs(dir_path)
+        dir_name = os.path.dirname(self.baseFilename)
+        with threading.Lock():
+            if not os.path.exists(dir_name):
+                os.makedirs(dir_name)
         return handlers.TimedRotatingFileHandler._open(self)
 
     def emit(self, record):
@@ -282,7 +300,7 @@ logger_config = {
             '()': RxLogHandler,
             'formatter': 'rx_formatter',
             'filename': os.path.join(custom_log_dir, "operations.log"),
-            'level': os.environ.get("LOG_LEVEL", "INFO").upper(),
+            'level': os.environ.get("LOG_LEVEL", "DEBUG").upper(),
         },
     },
     'loggers': {
@@ -294,9 +312,9 @@ logger_config = {
             'handlers': ['log_handler'],
             'level': 'DEBUG',
         },
-        "debug_info": {
-            'handlers': ['console', 'log_handler'],
-            'level': 'DEBUG',
+        'error': {
+            'handlers': ['log_handler', 'console'],
+            'level': 'ERROR',
         }
     }
 }
