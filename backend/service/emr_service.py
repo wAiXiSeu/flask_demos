@@ -26,16 +26,8 @@ def get_by_id(case_id, filters):
     info = collection.find_one(query, {"emr": 1})
     emr = info.get("emr") or {}
     res = {"inp_record": [], "first_page": []}
-    # titles = {"大病史", "入院记录", "出院记录", "死亡记录", "手术记录"}
+    titles = {"大病史", "入院记录", "出院记录", "死亡记录", "手术记录"}
     for k, v in emr.items():
-        # for tt in titles:
-        #     if tt in k:
-        #         for c in v:
-        #             res["inp_record"].append({
-        #                 "title": c.get("documentName"),
-        #                 "docId": c.get("docId"),
-        #                 "content": c.get("htmlContent")
-        #             })
         if "病案首页" in k:
             for c in v:
                 res["first_page"].append({
@@ -44,10 +36,18 @@ def get_by_id(case_id, filters):
                     "content": c.get("htmlContent")
                 })
         else:
+            for tt in titles:
+                if tt in k:
+                    level = -1
+                    break
+            else:
+                level = 1
             for c in v:
                 res["inp_record"].append({
+                    "level": level,
                     "title": c.get("documentName"),
                     "docId": c.get("docId"),
                     "content": c.get("htmlContent")
                 })
+    res["inp_record"] = sorted(res["inp_record"], key=lambda t: t.get("level"))
     return res
