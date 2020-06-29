@@ -8,4 +8,5 @@ docker==4.1.0
 gunicorn==19.9.0
 flask_caching
 pymongo==3.8.0
-
+bs4
+lxml

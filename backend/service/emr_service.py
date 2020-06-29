@@ -6,6 +6,7 @@ __author__ = 'wAIxi'
 __date__ = '2020-06-29'
 __description__ = doc description
 """
+from bs4 import BeautifulSoup
 from pymongo import MongoClient
 
 from core.cache import cache
@@ -68,11 +69,31 @@ def get_case_fields(case_id, doc_name, table_name="emr"):
     if doc_name == "病案首页":
         tmp = emr.get(doc_name) or []
         for t in tmp:
-            res.extend(t.get("contents"))
+            content_list = parse_index(t.get("htmlContent"))
+            res.extend(content_list)
     else:
         for _, v in emr.items():
             for c in v:
                 if c.get("documentName") == doc_name:
-                    res = c.get("contents")
+                    res = parse_index(c.get("htmlContent"))
                     break
     return res
+
+
+def parse_index(raw: str):
+    """根据病案首页 html 原文, 将其转换为字典组成的列表, 每项包含 title, content, did, sid 四项"""
+    if not raw:
+        return []
+    soup = BeautifulSoup(raw, 'lxml')
+    spans = soup.find_all('span')
+    rv = []
+    for span in spans:
+        title, did, sid, content = span.get('comment'), span.get('did'), span.get('sid'), span.text
+        if title:
+            rv.append({
+                'title': title,
+                'content': content,
+                'did': did,
+                'sid': sid
+            })
+    return rv
