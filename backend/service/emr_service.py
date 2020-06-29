@@ -6,21 +6,27 @@ __author__ = 'wAIxi'
 __date__ = '2020-06-29'
 __description__ = doc description
 """
-from core.db.mongo_helper import MongoHelper
+from pymongo import MongoClient
 
-collection = MongoHelper("localhost", 27017, "syf_example").get_collection("emr")
+from core.cache import cache
+
+db = MongoClient(host="mongo", port=27017).get_database("syf_example")
 
 
-def get_emr_list():
+def get_emr_list(collection_name):
+    collection = db.get_collection(collection_name)
     return list(collection.distinct("caseId"))
 
 
-def get_basic_info(case_id):
+def get_basic_info(case_id, table_name="emr"):
+    collection = db.get_collection(table_name)
     info = collection.find_one({"caseId": case_id}, {"emr": 0, "_id": 0})
     return dict(info)
 
 
-def get_by_id(case_id, filters):
+@cache.memoize(timeout=7*24*60*60, make_name="_emr_html_")
+def get_by_id(case_id, filters, table_name="emr"):
+    collection = db.get_collection(table_name)
     query = {"caseId": case_id}
     query.update(filters)
     info = collection.find_one(query, {"emr": 1})
@@ -33,7 +39,7 @@ def get_by_id(case_id, filters):
                 res["first_page"].append({
                     "title": c.get("documentName"),
                     "docId": c.get("docId"),
-                    "content": c.get("htmlContent")
+                    "htmlContent": c.get("htmlContent"),
                 })
         else:
             for tt in titles:
@@ -47,7 +53,26 @@ def get_by_id(case_id, filters):
                     "level": level,
                     "title": c.get("documentName"),
                     "docId": c.get("docId"),
-                    "content": c.get("htmlContent")
+                    "htmlContent": c.get("htmlContent"),
                 })
     res["inp_record"] = sorted(res["inp_record"], key=lambda t: t.get("level"))
+    return res
+
+
+@cache.memoize(timeout=7*24*60*60, make_name="_emr_fields_")
+def get_case_fields(case_id, doc_name, table_name="emr"):
+    collection = db.get_collection(table_name)
+    info = collection.find_one({"caseId": case_id}, {"emr": 1})
+    emr = info.get("emr") if info else {}
+    res = []
+    if doc_name == "病案首页":
+        tmp = emr.get(doc_name) or []
+        for t in tmp:
+            res.extend(t.get("contents"))
+    else:
+        for _, v in emr.items():
+            for c in v:
+                if c.get("documentName") == doc_name:
+                    res = c.get("contents")
+                    break
     return res

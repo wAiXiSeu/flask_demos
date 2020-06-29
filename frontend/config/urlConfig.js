@@ -15,6 +15,7 @@ let SERVICE_URL = {
     list_emr: BACK_END_BASE_URL + "syf/list ",
     get_emr: BACK_END_BASE_URL + "syf/case",
     get_basic_info: BACK_END_BASE_URL + "syf/basic",
+    get_fields: BACK_END_BASE_URL + "syf/fields",
   }
 };
 
