@@ -6,7 +6,7 @@ import './css/theme/style/theme/index.css';
 import App from './App'
 import router from './router'
 
-Vue.config.productionTip = false
+Vue.config.productionTip = false;
 Vue.use(ElementUI);
 
 /* eslint-disable no-new */
@@ -15,4 +15,4 @@ new Vue({
   router,
   components: { App },
   template: '<App/>'
-})
+});

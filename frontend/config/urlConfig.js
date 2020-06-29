@@ -10,6 +10,11 @@ let SERVICE_URL = {
   dockers: {
     list_images: BACK_END_BASE_URL + "docker/images/list",
     delete_images: BACK_END_BASE_URL + "docker/images/delete"
+  },
+  emr: {
+    list_emr: BACK_END_BASE_URL + "syf/list ",
+    get_emr: BACK_END_BASE_URL + "syf/case",
+    get_basic_info: BACK_END_BASE_URL + "syf/basic",
   }
 };
 

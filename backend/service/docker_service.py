@@ -10,7 +10,7 @@ import datetime
 
 import docker
 
-from backend.core.exceptions import BusinessError
+from core.exceptions import BusinessError
 
 docker_client = docker.from_env()
 

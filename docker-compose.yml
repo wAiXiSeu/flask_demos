@@ -7,7 +7,7 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     ports:
-      - "30080:8080"
+      - "30080:12345"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     env_file:

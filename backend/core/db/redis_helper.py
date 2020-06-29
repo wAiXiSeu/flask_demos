@@ -12,7 +12,7 @@ from datetime import datetime
 
 import redis
 
-from backend.core.exceptions import RedisError
+from core.exceptions import RedisError
 
 
 class RedisHelper(object):

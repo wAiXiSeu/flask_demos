@@ -12,7 +12,7 @@ from traceback import format_exc
 from flask import Flask, Response, jsonify
 from flask_cors import CORS
 
-from backend.core import loggers
+from core import loggers
 from .exceptions import _BaseException, ResultCode
 from .loggers import FlaskLogger
 

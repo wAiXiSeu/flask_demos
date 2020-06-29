@@ -10,13 +10,16 @@ import os
 
 from pymongo import MongoClient
 
+from core.loggers import LocalLogger
+from core.singleton import Singleton
 
-class MongoHelper(object):
-    def __init__(self, host, port, user, password, database):
+
+class MongoHelper(metaclass=Singleton):
+    def __init__(self, host="localhost", port=27017, database="", **kwargs):
         self.host = os.getenv("MONGO_HOST", host)
         self.port = os.getenv("MONGO_PORT", port)
-        self.username = os.getenv("MONGO_USERNAME", user)
-        self.password = os.getenv("MONGO_PASSWORD", password)
+        self.username = os.getenv("MONGO_USERNAME", kwargs.get("user"))
+        self.password = os.getenv("MONGO_PASSWORD", kwargs.get("password"))
         self.database = os.getenv("MONGO_DATABASE", database)
         self.uri = "mongodb://{host}:{port}".format(host=self.host, port=self.port)
         self.client = MongoClient(self.uri)
@@ -25,6 +28,10 @@ class MongoHelper(object):
         return self.client
 
     def get_database(self):
+        LocalLogger.info(
+            "try to connect to {}, database: {}".format(
+                "mongodb://{host}:{port}".format(host=self.host, port=self.port), self.database),
+            msg_type="MongoDB", where="MongoHelper.get_database")
         if self.username and self.password:
             self.client[self.database].authenticate(self.username, self.password)
         return self.client[self.database]

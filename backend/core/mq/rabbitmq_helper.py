@@ -11,7 +11,7 @@ import os
 import pika
 from pika.exceptions import ConnectionWrongStateError
 
-from backend.core.exceptions import MQError
+from core.exceptions import MQError
 
 
 class RabbitMqHelper:
