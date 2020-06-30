@@ -6,12 +6,15 @@ __author__ = 'wAIxi'
 __date__ = '2020-06-29'
 __description__ = doc description
 """
+import os
+
 from bs4 import BeautifulSoup
 from pymongo import MongoClient
 
 from core.cache import cache
 
-db = MongoClient(host="mongo", port=27017).get_database("syf_example")
+db = MongoClient(host=os.getenv("MONGO_HOST", "localhost"),
+                 port=int(os.getenv("MONGO_PORT", "27017"))).get_database("syf_example")
 
 
 def get_emr_list(collection_name):

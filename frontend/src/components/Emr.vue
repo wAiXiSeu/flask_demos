@@ -38,7 +38,13 @@
       <el-col :span="4" style="display: flex; align-items: center; justify-content: space-between">
         <el-button type="primary" @click="showInpRecordDetails">查看病历字段</el-button>
         <el-dialog title="病历字段" :visible.sync="showInpRecordDialog">
-          <el-table :data="inpRecordDetails"
+          <el-input
+            v-model="searchInpRecord"
+            placeholder="输入关键字搜索"
+            style="margin-bottom: 20px"/>
+          <el-table :data="inpRecordDetails.filter(data => !searchInpRecord ||
+          data.content.toLowerCase().includes(searchInpRecord.toLowerCase()) ||
+          data.title.toLowerCase().includes(searchInpRecord.toLowerCase()))"
                     border
                     height="400"
                     style="width: 100%;margin-bottom: 20px;">
@@ -48,7 +54,13 @@
         </el-dialog>
         <el-button type="primary" @click="showFirstPageDetails">查看病案首页字段</el-button>
         <el-dialog title="病历字段" :visible.sync="showFirstPageDialog">
-          <el-table :data="firstPageDetails"
+          <el-input
+            v-model="searchFirstPage"
+            placeholder="输入关键字搜索"
+          style="margin-bottom: 20px"/>
+          <el-table :data="firstPageDetails.filter(data => !searchFirstPage ||
+          data.content.toLowerCase().includes(searchFirstPage.toLowerCase()) ||
+          data.title.toLowerCase().includes(searchFirstPage.toLowerCase()))"
                     border
                     height="400"
                     style="width: 100%;margin-bottom: 20px;">
@@ -95,6 +107,8 @@
         inpRecordDetails: [],
         firstPageDetails: [],
         collectionRadio: 0,
+        searchInpRecord: "",
+        searchFirstPage: "",
       }
     },
 
