@@ -9,7 +9,7 @@ __description__ = doc description
 from flask import Blueprint, request
 
 from core.web_utils import api_response
-from service.emr_service import get_emr_list, get_by_id, get_basic_info, get_case_fields
+from service.emr_service import get_emr_list, get_by_id, get_basic_info, get_case_fields, get_case_x
 
 emr = Blueprint("emr", __name__)
 
@@ -38,3 +38,8 @@ def _get_case_fields():
     res = get_case_fields(request.args.get("caseId"), request.args.get("docName"),  request.args.get("collection_name"))
     return api_response(res)
 
+
+@emr.route("/casex", methods=["GET", "POST"])
+def _get_casex():
+    res = get_case_x(request.args.get("caseId"))
+    return api_response(res)

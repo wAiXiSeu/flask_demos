@@ -8,13 +8,19 @@ __description__ = doc description
 """
 import os
 
+import pymysql
 from bs4 import BeautifulSoup
 from pymongo import MongoClient
 
 from core.cache import cache
 
 db = MongoClient(host=os.getenv("MONGO_HOST", "localhost"),
-                 port=int(os.getenv("MONGO_PORT", "27017"))).get_database("syf_example")
+                 port=int(os.getenv("MONGO_PORT", "27017"))).get_database(os.getenv("MONGO_DB", "syf_example"))
+
+mysql = pymysql.connect(host=os.getenv("MYSQL_HOST", "localhost"),
+                        port=int(os.getenv("MYSQL_PORT", "3306")),
+                        user=os.getenv("MYSQL_USER", "root"),
+                        password=os.getenv("MYSQL_PASS", "123456"), db="syf", charset="utf8")
 
 
 def get_emr_list(collection_name):
@@ -28,7 +34,7 @@ def get_basic_info(case_id, table_name="emr"):
     return dict(info)
 
 
-@cache.memoize(timeout=7*24*60*60, make_name="_emr_html_")
+@cache.memoize(timeout=7 * 24 * 60 * 60, make_name="_emr_html_")
 def get_by_id(case_id, filters, table_name="emr"):
     collection = db.get_collection(table_name)
     query = {"caseId": case_id}
@@ -63,7 +69,7 @@ def get_by_id(case_id, filters, table_name="emr"):
     return res
 
 
-@cache.memoize(timeout=7*24*60*60, make_name="_emr_fields_")
+@cache.memoize(timeout=7 * 24 * 60 * 60, make_name="_emr_fields_")
 def get_case_fields(case_id, doc_name, table_name="emr"):
     collection = db.get_collection(table_name)
     info = collection.find_one({"caseId": case_id}, {"emr": 1})
@@ -100,3 +106,21 @@ def parse_index(raw: str):
                 'sid': sid
             })
     return rv
+
+
+@cache.memoize(timeout=7 * 24 * 60 * 60, make_name="_emrx_html_")
+def get_case_x(case_id):
+    cursor = mysql.cursor()
+    sql = "select caseId, docId, documentName, htmlContent from caseEmr where caseId='{}'".format(case_id)
+    cursor.execute(sql)
+    res = cursor.fetchall()
+    # wraps data
+    buf = []
+    for r in res:
+        buf.append({
+            "title": r[2],
+            "docId": r[1],
+            "htmlContent": r[3]
+        })
+    return buf
+
