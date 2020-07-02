@@ -10,3 +10,5 @@ flask_caching
 pymongo==3.8.0
 bs4
 lxml
+pymysql
+xlrd
