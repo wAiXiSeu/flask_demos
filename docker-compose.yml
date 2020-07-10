@@ -18,6 +18,8 @@ services:
       - mysql
     networks:
       - net-yc
+    environment:
+      MONGO_HOST: mongo
 
   frontend:
     container_name: frontend-waixi

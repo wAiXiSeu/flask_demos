@@ -14,8 +14,7 @@ __description__ = doc description
 所有的配置选项参见 http://docs.gunicorn.org/en/stable/settings.html
 """
 
-# 默认端口 8080
-bind = '0.0.0.0:8080'
+bind = '0.0.0.0:12345'
 
 # 进程数
 workers = 1
