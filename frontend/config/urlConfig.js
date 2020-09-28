@@ -12,11 +12,16 @@ let SERVICE_URL = {
     delete_images: BACK_END_BASE_URL + "docker/images/delete"
   },
   emr: {
-    list_emr: BACK_END_BASE_URL + "syf/list ",
+    list_emr: BACK_END_BASE_URL + "syf/list",
     get_emr: BACK_END_BASE_URL + "syf/case",
     get_basic_info: BACK_END_BASE_URL + "syf/basic",
     get_fields: BACK_END_BASE_URL + "syf/fields",
     get_emrx: BACK_END_BASE_URL + "syf/casex",
+  },
+  tz: {
+    list_vid: BACK_END_BASE_URL + "tz/vid",
+    list_doc: BACK_END_BASE_URL + "tz/doc",
+    list_details: BACK_END_BASE_URL + "tz/details",
   }
 };
 

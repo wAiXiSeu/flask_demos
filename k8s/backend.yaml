@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    bdmd.com/service: emr-demo
+  name: backend-waixi
+  namespace: service-nj
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      bdmd.com/service: emr-demo
+  template:
+    metadata:
+      labels:
+        bdmd.com/service: emr-demo
+    spec:
+      containers:
+      - image: dockerdist.bdmd.com/emr_demo_back:v1.0
+        envFrom:
+        - configMapRef:
+            name: emr-conf
+        imagePullPolicy: Always
+        name: backend-waixi
+      restartPolicy: Always
+      nodeSelector:
+        bdmd.com/type: service
+      tolerations:              # taints
+        - effect: NoSchedule
+          operator: Exists
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    bdmd.com/service: emr-demo
+  name: backend-waixi
+  namespace: service-nj
+spec:
+  type: ClusterIP
+  ports:
+  - name: svc-port
+    port: 12345
+  selector:
+    bdmd.com/service: emr-demo
+
+

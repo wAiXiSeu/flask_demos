@@ -19,7 +19,8 @@ services:
     networks:
       - net-yc
     environment:
-      MONGO_HOST: mongo
+      MONGO_HOST: '192.168.1.7'
+      MONGO_DB: syf21
 
   frontend:
     container_name: frontend-waixi

@@ -4,6 +4,7 @@ import HelloWorld from '@/components/HelloWorld'
 import Dockers from "@/components/Dockers";
 import Emr from "@/components/Emr";
 import Emrx from "@/components/Emrx";
+import TZ from "@/components/TzEmr";
 
 Vue.use(Router);
 
@@ -28,6 +29,11 @@ export default new Router({
       path: '/emrx',
       name: 'EMRX',
       component: Emrx
+    },
+    {
+      path: '/tz',
+      name: 'TZ',
+      component: TZ
     }
   ]
 })

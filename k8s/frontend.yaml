@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    bdmd.com/service: emr-demo-front
+  name: frontend-waixi
+  namespace: service-nj
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      bdmd.com/service: emr-demo-front
+  template:
+    metadata:
+      labels:
+        bdmd.com/service: emr-demo-front
+    spec:
+      containers:
+      - image: dockerdist.bdmd.com/emr_demo_front:v1.0
+        imagePullPolicy: Always
+        name: frontend-waixi
+      restartPolicy: Always
+      nodeSelector:
+        bdmd.com/type: service
+      tolerations:              # taints
+        - effect: NoSchedule
+          operator: Exists
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    bdmd.com/service: emr-demo-front
+  name: frontend-waixi
+  namespace: service-nj
+spec:
+  type: NodePort
+  ports:
+  - name: svc-port
+    port: 8080
+    nodePort: 30083
+  selector:
+    bdmd.com/service: emr-demo-front
+
+
