@@ -11,10 +11,9 @@ import os
 from pymongo import MongoClient
 
 from core.loggers import LocalLogger
-from core.singleton import Singleton
 
 
-class MongoHelper(metaclass=Singleton):
+class MongoHelper:
     def __init__(self, host="localhost", port=27017, database="", **kwargs):
         self.host = os.getenv("MONGO_HOST", host)
         self.port = os.getenv("MONGO_PORT", port)

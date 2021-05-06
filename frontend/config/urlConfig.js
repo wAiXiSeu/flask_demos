@@ -22,6 +22,11 @@ let SERVICE_URL = {
     list_vid: BACK_END_BASE_URL + "tz/vid",
     list_doc: BACK_END_BASE_URL + "tz/doc",
     list_details: BACK_END_BASE_URL + "tz/details",
+  },
+  testCases: {
+    list_caseId: BACK_END_BASE_URL + "cases/list",
+    get_emr: BACK_END_BASE_URL + "cases/emr",
+    get_qc: BACK_END_BASE_URL + "cases/qc",
   }
 };
 

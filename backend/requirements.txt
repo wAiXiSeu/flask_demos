@@ -13,3 +13,4 @@ lxml
 pymysql
 xlrd
 cryptography
+ujson

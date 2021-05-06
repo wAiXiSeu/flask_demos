@@ -5,6 +5,7 @@ import Dockers from "@/components/Dockers";
 import Emr from "@/components/Emr";
 import Emrx from "@/components/Emrx";
 import TZ from "@/components/TzEmr";
+import TC from "@/components/TestCase";
 
 Vue.use(Router);
 
@@ -34,6 +35,11 @@ export default new Router({
       path: '/tz',
       name: 'TZ',
       component: TZ
-    }
+    },
+    {
+      path: '/cases',
+      name: 'TC',
+      component: TC
+    },
   ]
 })
