@@ -32,3 +32,8 @@ def get_emr():
 def get_qc_result():
     case_id = request.json.get("caseId")
     return api_response(service.get_qc_result(case_id))
+
+
+@test_case.route("/delete", methods=["POST"])
+def delete_test_data():
+    return api_response(service.delete_test_data())
