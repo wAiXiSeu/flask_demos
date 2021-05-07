@@ -27,6 +27,7 @@ let SERVICE_URL = {
     list_caseId: BACK_END_BASE_URL + "cases/list",
     get_emr: BACK_END_BASE_URL + "cases/emr",
     get_qc: BACK_END_BASE_URL + "cases/qc",
+    delete_qcs: BACK_END_BASE_URL + "cases/delete",
   }
 };
 

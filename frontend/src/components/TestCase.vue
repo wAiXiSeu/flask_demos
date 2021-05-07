@@ -23,6 +23,7 @@
             :value="item.value">
           </el-option>
         </el-select>
+        <i class="el-icon-delete" @click="deleteAllData"></i>
       </el-col>
     </el-row>
     <el-row :gutter="20">
@@ -59,6 +60,14 @@
             prop="message"
             label="message">
           </el-table-column>
+          <el-table-column
+            fixed="right"
+            label="操作"
+            width="100">
+            <template slot-scope="scope">
+              <el-button @click="reviewDocument(scope.row)" type="text" size="small">查看相关文档</el-button>
+            </template>
+          </el-table-column>
         </el-table>
       </el-col>
     </el-row>
@@ -77,7 +86,6 @@
         caseIds: [],
         selectedCaseId: "",
         selectedDocId: "",
-        selectedDocName: "",
         showEmr: "",
         qcResults: [],
         docNames: [],
@@ -160,6 +168,42 @@
       filterHandler(value, row, column) {
         const property = column['property'];
         return row[property] === value;
+      },
+
+      reviewDocument(row){
+        let docId = row.doc_id;
+        if (docId.length>0){
+          this.selectedDocId = docId[0];
+          this.get_doc();
+        }
+      },
+
+      deleteAllData(){
+        this.$confirm('此操作将永久删除数据库, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          axios.post(SERVICE_URL.testCases.delete_qcs, {}).then((response) => {
+            if (response.status === 200 && response.data.code === 20000) {
+              this.$message({
+                type: 'success',
+                message: '删除成功!'
+              });
+            }
+          }).catch(function (error) {
+              console.log(error);
+              this.$message({
+                type: 'info',
+                message: '已取消删除'
+              })
+            });
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });
+        });
       },
 
     },
