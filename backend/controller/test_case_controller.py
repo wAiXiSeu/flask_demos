@@ -21,19 +21,26 @@ def list_all_cases():
     return api_response(service.list_all_cases(hospital))
 
 
-@test_case.route('/emr', methods=["POST"])
+@test_case.route('/emr', methods=["GET"])
 def get_emr():
-    case_id = request.json.get("caseId")
-    hospital = request.json.get("hospital")
+    case_id = request.args.get("caseId")
+    hospital = request.args.get("hospital")
     return api_response(service.get_emr(case_id, hospital))
 
 
-@test_case.route("/qc", methods=["POST"])
+@test_case.route("/qc", methods=["GET"])
 def get_qc_result():
-    case_id = request.json.get("caseId")
+    case_id = request.args.get("caseId")
     return api_response(service.get_qc_result(case_id))
 
 
 @test_case.route("/delete", methods=["POST"])
 def delete_test_data():
     return api_response(service.delete_test_data())
+
+
+@test_case.route("/doctor_result", methods=["GET"])
+def get_doctor_result():
+    case_id = request.args.get("caseId")
+    qc_id = request.args.get("qcId")
+    return api_response(service.get_doctor_result(case_id, qc_id))

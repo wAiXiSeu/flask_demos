@@ -28,6 +28,7 @@ let SERVICE_URL = {
     get_emr: BACK_END_BASE_URL + "cases/emr",
     get_qc: BACK_END_BASE_URL + "cases/qc",
     delete_qcs: BACK_END_BASE_URL + "cases/delete",
+    doctor_result: BACK_END_BASE_URL + "cases/doctor_result",
   }
 };
 

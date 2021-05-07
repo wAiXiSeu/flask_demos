@@ -9,6 +9,7 @@ __description__ = doc description
 from datetime import datetime
 
 from core.db.mongo_helper import MongoHelper
+from core.db.mysql_helper import mysql
 
 try:
     import ujson as json
@@ -52,7 +53,20 @@ def get_qc_result(case_id):
     :return:
     """
     t = qc_collection.find_one({'rid': case_id}, {'results': 1})
-    return t.get("results") if t else None
+    r = t.get("results") if t else []
+    d = get_doctor_result(case_id, '')
+    table = {_.get("qc_id"): (_.get("doctor_result"), _.get("errorReason")) for _ in d}
+    for _ in r:
+        k = _['check_id'].split('_')[0].upper()
+        if k.startswith("YF"):
+            k = str(int(k[2:]))
+        if k in table:
+            _['doctor_result'] = table[k][0]
+            _['error_reason'] = table[k][1]
+        else:
+            _['doctor_result'] = '无'
+            _['error_reason'] = ''
+    return r
 
 
 def delete_test_data():
@@ -62,3 +76,13 @@ def delete_test_data():
     """
     suffix = datetime.now().strftime("%Y%m%d%H%M")
     return qc_collection.rename(f"test_data_{suffix}")
+
+
+def get_doctor_result(case_id, qc_id: str):
+    sql = "select * from DoctorResult where 1=1"
+    if case_id:
+        sql += f" and caseId='{case_id}'"
+    if qc_id:
+        sql += f" and qc_id='{qc_id.upper()}'"
+    sql += ";"
+    return mysql.query(sql=sql)

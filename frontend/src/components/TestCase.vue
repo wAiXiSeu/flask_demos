@@ -4,7 +4,7 @@
       <el-col :span="8" style="display: flex; align-items: center; justify-content: space-between">
         <el-select v-model="selectedCaseId"
                    placeholder="请选择caseId"
-                   @change="get_emr"
+                   @change="getDetails"
                    filterable>
           <el-option
             v-for="item in caseIds"
@@ -68,6 +68,19 @@
               <el-button @click="reviewDocument(scope.row)" type="text" size="small">查看相关文档</el-button>
             </template>
           </el-table-column>
+          <el-table-column
+            prop="doctor_result"
+            label="医生判断"
+            width="100"
+            :filters="[{ text: '错', value: '错' }, { text: '对', value: '对'}, { text: '无', value: '无'}]"
+            :filter-method="filterDoctorResult">
+            <template slot-scope="scope">
+              <el-tag
+                :type="changeStatusView(scope.row.doctor_result)">
+                {{scope.row.doctor_result}}
+              </el-tag>
+            </template>
+          </el-table-column>
         </el-table>
       </el-col>
     </el-row>
@@ -114,16 +127,19 @@
         });
       },
 
-      get_emr() {
+      getDetails() {
+        this.getEmr();
+        this.getQcResults();
+      },
+
+      getEmr() {
         this.emrRecords = [];
         this.basicInfo = {};
         this.selectedDocId = "";
         this.docNames = [];
         this.toolTipText = "";
         this.qcResults = [];
-        axios.post(SERVICE_URL.testCases.get_emr, {
-          "caseId": this.selectedCaseId,
-        }).then((response) => {
+        axios.get(`${SERVICE_URL.testCases.get_emr}?caseId=${this.selectedCaseId}`).then((response) => {
           if (response.status === 200 && response.data.code === 20000) {
             this.emrRecords = response.data.data.emr;
             this.basicInfo = response.data.data.basicInfo;
@@ -139,22 +155,19 @@
           .catch(function (error) {
             console.log(error);
           });
-
       },
 
-      get_doc() {
+      getDoc() {
         this.showEmr = "";
         for (let i of this.emrRecords) {
-          if (i.docId == this.selectedDocId) {
+          if (i.docId === this.selectedDocId) {
             this.showEmr = i.htmlContent;
           }
         }
       },
 
-      get_qc_results() {
-        axios.post(SERVICE_URL.testCases.get_qc, {
-          "caseId": this.selectedCaseId,
-        }).then((response) => {
+      getQcResults() {
+        axios.get(`${SERVICE_URL.testCases.get_qc}?caseId=${this.selectedCaseId}`).then((response) => {
           if (response.status === 200 && response.data.code === 20000) {
             this.qcResults = response.data.data;
           }
@@ -170,15 +183,15 @@
         return row[property] === value;
       },
 
-      reviewDocument(row){
+      reviewDocument(row) {
         let docId = row.doc_id;
-        if (docId.length>0){
+        if (docId.length > 0) {
           this.selectedDocId = docId[0];
-          this.get_doc();
+          this.getDoc();
         }
       },
 
-      deleteAllData(){
+      deleteAllData() {
         this.$confirm('此操作将永久删除数据库, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
@@ -192,12 +205,12 @@
               });
             }
           }).catch(function (error) {
-              console.log(error);
-              this.$message({
-                type: 'info',
-                message: '已取消删除'
-              })
-            });
+            console.log(error);
+            this.$message({
+              type: 'info',
+              message: '已取消删除'
+            })
+          });
         }).catch(() => {
           this.$message({
             type: 'info',
@@ -205,6 +218,20 @@
           });
         });
       },
+
+      filterDoctorResult(value, row) {
+        return row.doctor_result === value;
+      },
+
+      changeStatusView(status){
+        if (status==='对'){
+          return 'warning'
+        }else if(status==='错'){
+          return 'success'
+        }else{
+          return 'info'
+        }
+      }
 
     },
 
@@ -218,8 +245,7 @@
 
     watch: {
       selectedDocId() {
-        this.get_doc();
-        this.get_qc_results();
+        this.getDoc();
       }
     },
 
@@ -240,7 +266,7 @@
     margin-bottom: 0;
   }
 
-  p,span {
+  p, span {
     line-height: 24px !important;
   }
 </style>
