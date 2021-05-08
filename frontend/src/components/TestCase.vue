@@ -4,7 +4,6 @@
       <el-col :span="8" style="display: flex; align-items: center; justify-content: space-between">
         <el-select v-model="selectedCaseId"
                    placeholder="请选择caseId"
-                   @change="getDetails"
                    filterable>
           <el-option
             v-for="item in caseIds"
@@ -24,6 +23,37 @@
           </el-option>
         </el-select>
         <i class="el-icon-delete" @click="deleteAllData"></i>
+        <el-button type="text" @click="showTestCaseTable = true">查看测试用例</el-button>
+        <el-dialog title="测试用例" :visible.sync="showTestCaseTable">
+          <el-col :span="12" style="display: flex; align-items: center; justify-content: space-between">
+            <el-input
+              placeholder="请输入内容"
+              prefix-icon="el-icon-search"
+              v-model="testCaseKeyWord"
+              @keyup.enter.native="searchTestCase">
+            </el-input>
+          </el-col>
+
+          <el-table ref="filterTable" border height="600"
+                    :data="testCaseTableData">
+            <el-table-column property="caseId" label="caseId" width="150">
+              <template slot-scope="{row}">
+                <el-link @click="selectedCaseId = row.caseId; showTestCaseTable=false">{{row.caseId}}</el-link>
+              </template>
+            </el-table-column>
+            <el-table-column property="qc_id" label="质控点编号" width="200"></el-table-column>
+            <el-table-column property="qc_name" label="质控点名称"></el-table-column>
+            <el-table-column property="doctor_result" label="医生判断"></el-table-column>
+            <el-table-column property="errorReason" label="错误信息"></el-table-column>
+          </el-table>
+          <el-pagination
+            @current-change="handleCurrentChange"
+            :current-page="currentPage"
+            :page-size="20"
+            layout="total, prev, pager, next"
+            :total="testCaseFilterData.length">
+          </el-pagination>
+        </el-dialog>
       </el-col>
     </el-row>
     <el-row :gutter="20">
@@ -84,6 +114,7 @@
         </el-table>
       </el-col>
     </el-row>
+
   </div>
 </template>
 <script>
@@ -103,6 +134,12 @@
         qcResults: [],
         docNames: [],
         toolTipText: "",
+        showTestCaseTable: false,
+        testCaseKeyWord: '',
+        testCaseTotalData: [], // 所有用例数据
+        testCaseTableData: [], // 表格中展示的一页数据
+        testCaseFilterData: [], // 筛选的用例数据
+        currentPage: 1,
       }
     },
 
@@ -117,7 +154,7 @@
         this.caseIds = [];
         this.qcResults = [];
         axios.get(`${SERVICE_URL.testCases.list_caseId}?hospital=lishui`).then((response) => {
-          if (response.status === 200) {
+          if (response.status === 200 && response.data.code === 20000) {
             for (let d of response.data.data) {
               this.caseIds.push(d);
             }
@@ -125,6 +162,7 @@
         }).catch(function (error) {
           console.log(error);
         });
+        this.getDoctorResults();
       },
 
       getDetails() {
@@ -161,13 +199,14 @@
         this.showEmr = "";
         for (let i of this.emrRecords) {
           if (i.docId === this.selectedDocId) {
-            this.showEmr = i.htmlContent;
+            this.showEmr = i.htmlContent.replace('background-color:white;', '');
           }
         }
       },
 
       getQcResults() {
-        axios.get(`${SERVICE_URL.testCases.get_qc}?caseId=${this.selectedCaseId}`).then((response) => {
+        axios.get(`${SERVICE_URL.testCases.get_qc}?caseId=${this.selectedCaseId}&pages=${this.currentPage}
+        &page_size=20`).then((response) => {
           if (response.status === 200 && response.data.code === 20000) {
             this.qcResults = response.data.data;
           }
@@ -176,6 +215,22 @@
             console.log(error);
           });
 
+      },
+
+      getDoctorResults() {
+        this.currentPage = 1;
+        axios.get(`${SERVICE_URL.testCases.doctor_result}`)
+          .then((response) => {
+            if (response.status === 200 && response.data.code === 20000) {
+              this.testCaseTotalData = response.data.data;
+              this.testCaseFilterData = this.testCaseTotalData;
+              this.testCaseTableData = this.testCaseFilterData.slice(
+                20 * (this.currentPage-1), 20* this.currentPage
+              );
+            }
+          }).catch(function (error) {
+          console.log(error);
+        });
       },
 
       filterHandler(value, row, column) {
@@ -223,16 +278,28 @@
         return row.doctor_result === value;
       },
 
-      changeStatusView(status){
-        if (status==='对'){
+      changeStatusView(status) {
+        if (status === '对') {
           return 'warning'
-        }else if(status==='错'){
+        } else if (status === '错') {
           return 'success'
-        }else{
+        } else {
           return 'info'
         }
-      }
+      },
 
+      handleCurrentChange(val) {
+        //修改当前页
+        this.currentPage = val;
+        this.testCaseTableData = this.testCaseFilterData.slice(20 * (this.currentPage-1),20* this.currentPage);
+      },
+
+      searchTestCase() {
+        this.currentPage = 1;
+        this.testCaseFilterData = this.testCaseTotalData.filter(data => !this.testCaseKeyWord ||
+          data.qc_id.toLowerCase().includes(this.testCaseKeyWord.toLowerCase()));
+        this.testCaseTableData = this.testCaseFilterData.slice(20 * (this.currentPage-1),20* this.currentPage);
+      },
     },
 
     created() {
@@ -246,6 +313,9 @@
     watch: {
       selectedDocId() {
         this.getDoc();
+      },
+      selectedCaseId() {
+        this.getDetails();
       }
     },
 
