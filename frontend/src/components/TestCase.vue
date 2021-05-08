@@ -35,7 +35,8 @@
           </el-col>
 
           <el-table ref="filterTable" border height="600"
-                    :data="testCaseTableData">
+                    :data="testCaseTableData"
+                    :row-class-name="testCaseStatus">
             <el-table-column property="caseId" label="caseId" width="150">
               <template slot-scope="{row}">
                 <el-link @click="selectedCaseId = row.caseId; showTestCaseTable=false">{{row.caseId}}</el-link>
@@ -45,6 +46,7 @@
             <el-table-column property="qc_name" label="质控点名称"></el-table-column>
             <el-table-column property="doctor_result" label="医生判断"></el-table-column>
             <el-table-column property="errorReason" label="错误信息"></el-table-column>
+            <el-table-column property="code" label="质控结果"></el-table-column>
           </el-table>
           <el-pagination
             @current-change="handleCurrentChange"
@@ -300,6 +302,18 @@
           data.qc_id.toLowerCase().includes(this.testCaseKeyWord.toLowerCase()));
         this.testCaseTableData = this.testCaseFilterData.slice(20 * (this.currentPage-1),20* this.currentPage);
       },
+
+      testCaseStatus({row, rowIndex}) {
+        if (row.code === '') {
+          return ''
+        }
+        if ((row.code !== "2" && row.doctor_result === '错')
+          || (row.code !== "1" && row.doctor_result === '对')) {
+          return 'warning-row';
+        }
+        return '';
+      },
+
     },
 
     created() {
@@ -334,6 +348,14 @@
 
   .el-row:last-child {
     margin-bottom: 0;
+  }
+
+  .el-table .warning-row {
+    background: oldlace;
+  }
+
+  .el-table .success-row {
+    background: #f0f9eb;
   }
 
   p, span {

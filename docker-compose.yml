@@ -17,7 +17,7 @@ services:
 #      - redis
 #      - mysql
     networks:
-      - net-yc
+      - flask_demo
     environment:
       MONGO_DB: quality_control_actor
 
@@ -27,7 +27,7 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
     networks:
-      - net-yc
+      - flask_demo
     ports:
       - "30081:8080"
     restart: always
@@ -44,7 +44,7 @@ services:
 #    environment:
 #      MYSQL_ROOT_PASSWORD: 123456
 #    networks:
-#      - net-yc
+#      - flask_demo
 #    restart: always
 #
 #  mongo:
@@ -56,7 +56,7 @@ services:
 #      - "${MONGO_VOLUME}/data/db:/data/db"
 #      - "${MONGO_VOLUME}/data/configdb:/data/configdb"
 #    networks:
-#      - net-yc
+#      - flask_demo
 #    restart: always
 #
 #  redis:
@@ -67,9 +67,9 @@ services:
 #    volumes:
 #      - "${REDIS_VOLUME}/data:/data"
 #    networks:
-#      - net-yc
+#      - flask_demo
 #    restart: always
 
 networks:
-  net-yc:
-    driver: bridge
+  flask_demo:
+    external: true
