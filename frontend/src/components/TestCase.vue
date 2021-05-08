@@ -25,18 +25,20 @@
         <i class="el-icon-delete" @click="deleteAllData"></i>
         <el-button type="text" @click="showTestCaseTable = true">查看测试用例</el-button>
         <el-dialog title="测试用例" :visible.sync="showTestCaseTable">
-          <el-col :span="12" style="display: flex; align-items: center; justify-content: space-between">
+          <el-col :span="12" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px">
             <el-input
               placeholder="请输入内容"
               prefix-icon="el-icon-search"
               v-model="testCaseKeyWord"
               @keyup.enter.native="searchTestCase">
             </el-input>
+            <el-checkbox v-model="onlyConflictCase" style="margin-left: 10%">只显示冲突项</el-checkbox>
           </el-col>
 
           <el-table ref="filterTable" border height="600"
                     :data="testCaseTableData"
-                    :row-class-name="testCaseStatus">
+                    :row-class-name="testCaseStatus"
+                    :default-sort = "{prop: 'qc_id', order: 'ascending'}">
             <el-table-column property="caseId" label="caseId" width="150">
               <template slot-scope="{row}">
                 <el-link @click="selectedCaseId = row.caseId; showTestCaseTable=false">{{row.caseId}}</el-link>
@@ -142,6 +144,7 @@
         testCaseTableData: [], // 表格中展示的一页数据
         testCaseFilterData: [], // 筛选的用例数据
         currentPage: 1,
+        onlyConflictCase: false, // 是否只显示质控结果和医生判断不一致的点
       }
     },
 
@@ -330,7 +333,17 @@
       },
       selectedCaseId() {
         this.getDetails();
-      }
+      },
+      onlyConflictCase() {
+        this.currentPage = 1;
+        if (this.onlyConflictCase) {
+          this.testCaseFilterData = this.testCaseTotalData.filter(data => data.code !== "" &&
+            ((data.code !== "2" && data.doctor_result === "错") || (data.code !== "1" && data.doctor_result === "对")));
+          this.testCaseTableData = this.testCaseFilterData.slice(20 * (this.currentPage-1),20* this.currentPage);
+        }else{
+          this.searchTestCase();
+        }
+      },
     },
 
     computed: {}
