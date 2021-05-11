@@ -39,6 +39,11 @@ def delete_test_data():
     return api_response(service.delete_test_data())
 
 
+@test_case.route("/download", methods=["GET"])
+def download_test_data():
+    return service.download_test_data()
+
+
 @test_case.route("/doctor_result", methods=["GET"])
 def get_doctor_result():
     case_id = request.args.get("caseId")

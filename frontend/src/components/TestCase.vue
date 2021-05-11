@@ -23,6 +23,7 @@
           </el-option>
         </el-select>
         <i class="el-icon-delete" @click="deleteAllData"></i>
+        <a class="el-icon-download" :href="SERVICE_URL.testCases.download_qcs"></a>
         <el-button type="text" @click="showTestCaseTable = true">查看测试用例</el-button>
         <el-dialog title="测试用例" :visible.sync="showTestCaseTable">
           <el-col :span="12" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px">
@@ -145,6 +146,7 @@
         testCaseFilterData: [], // 筛选的用例数据
         currentPage: 1,
         onlyConflictCase: false, // 是否只显示质控结果和医生判断不一致的点
+        SERVICE_URL,
       }
     },
 

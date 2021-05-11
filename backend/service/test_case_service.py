@@ -8,11 +8,17 @@ __description__ = doc description
 """
 from collections import defaultdict
 from datetime import datetime
+from urllib.parse import quote
+
+from flask import make_response
 
 from core.cache import cache
 from core.db.mongo_helper import MongoHelper
 from core.db.mysql_helper import mysql
 
+from io import BytesIO
+
+import pandas as pds
 try:
     import ujson as json
 except:
@@ -91,6 +97,45 @@ def delete_test_data():
     cache.delete_memoized(get_doctor_result)
     suffix = datetime.now().strftime("%Y%m%d%H%M")
     return qc_collection.rename(f"test_data_{suffix}")
+
+
+def download_test_data():
+    """
+    下载所有数据
+    :return:
+    """
+    out = BytesIO()
+    writer = pds.ExcelWriter(out)
+    workbook = writer.book
+    table = workbook.add_worksheet()
+    dump_data = qc_collection.find()
+    # write header
+    columns = [
+        "caseId",
+        "check_id",
+        "code",
+        "doc_id",
+        "message",
+    ]
+    for i, c in enumerate(columns):
+        table.write(0, i, c)
+    # write data
+    count = 1
+    for c in dump_data:
+        r = c.get("results")
+        for _r in r:
+            table.write(count, 0, c.get("rid"))
+            table.write(count, 1, str(_r.get("check_id", "")))
+            table.write(count, 2, str(_r.get("code", "")))
+            table.write(count, 3, ','.join(_r.get("doc_id", [])))
+            table.write(count, 4, _r.get("message", ""))
+            count += 1
+    workbook.close()
+    out.seek(0)
+    resp = make_response(out.getvalue())
+    resp.headers["Content-Disposition"] = "attachment; filename=cases.xlsx"
+    resp.headers['Content-Type'] = 'application/x-xlsx'
+    return resp
 
 
 @cache.memoize(timeout=24*60*60)
