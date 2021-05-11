@@ -110,7 +110,7 @@ def download_test_data():
     :return:
     """
     out = BytesIO()
-    writer = pds.ExcelWriter(out)
+    writer = pds.ExcelWriter(out, engine='xlsxwriter')
     workbook = writer.book
     table = workbook.add_worksheet()
     dump_data = qc_collection.find()
