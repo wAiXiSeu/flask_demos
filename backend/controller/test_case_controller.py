@@ -39,6 +39,11 @@ def delete_test_data():
     return api_response(service.delete_test_data())
 
 
+@test_case.route("/remove_cache", methods=["POST"])
+def remove_cache():
+    return api_response(service.remove_cache())
+
+
 @test_case.route("/download", methods=["GET"])
 def download_test_data():
     return service.download_test_data()

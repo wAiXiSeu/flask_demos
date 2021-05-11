@@ -19,6 +19,7 @@ from core.db.mysql_helper import mysql
 from io import BytesIO
 
 import pandas as pds
+
 try:
     import ujson as json
 except:
@@ -94,9 +95,13 @@ def delete_test_data():
     删除数据库test_data，软删除，重命名
     :return:
     """
-    cache.delete_memoized(get_doctor_result)
+    cache.delete_memoized_verhash(get_doctor_result)
     suffix = datetime.now().strftime("%Y%m%d%H%M")
     return qc_collection.rename(f"test_data_{suffix}")
+
+
+def remove_cache():
+    cache.clear()
 
 
 def download_test_data():
