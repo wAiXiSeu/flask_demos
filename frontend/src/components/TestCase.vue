@@ -206,7 +206,7 @@
         this.showEmr = "";
         for (let i of this.emrRecords) {
           if (i.docId === this.selectedDocId) {
-            this.showEmr = i.htmlContent.replace('background-color:white;', '');
+            this.showEmr = i.htmlContent instanceof Object ? i.htmlContent : i.htmlContent.replace('background-color:white;', '');
           }
         }
       },

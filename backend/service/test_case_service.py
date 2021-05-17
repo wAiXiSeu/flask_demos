@@ -61,7 +61,7 @@ def get_qc_result(case_id):
     :param case_id:
     :return:
     """
-    t = qc_collection.find_one({'rid': case_id}, {'results': 1})
+    t = qc_collection.find_one({'request.caseId': case_id}, {'results': 1})
     r = t.get("results") if t else []
     d = get_doctor_result(case_id, '')
     table = {_.get("qc_id"): (_.get("doctor_result"), _.get("errorReason")) for _ in d}
@@ -127,9 +127,10 @@ def download_test_data():
     # write data
     count = 1
     for c in dump_data:
+        req = c.get("request")
         r = c.get("results")
         for _r in r:
-            table.write(count, 0, c.get("rid"))
+            table.write(count, 0, req.get("caseId"))
             table.write(count, 1, str(_r.get("check_id", "")))
             table.write(count, 2, str(_r.get("code", "")))
             table.write(count, 3, ','.join(_r.get("doc_id", [])))
@@ -153,13 +154,14 @@ def get_doctor_result(case_id, qc_id: str):
     sql += ";"
     r = mysql.query(sql=sql)
     case_ids = list(set([_.get("caseId") for _ in r]))
-    t = qc_collection.find({"rid": {"$in": case_ids}})
+    t = qc_collection.find({"request.caseId": {"$in": case_ids}})
     table = defaultdict(dict)
     for _ in t:
         results = _.get("results")
+        req = _.get("request")
         for _r in results:
             k = _fmt_check_id(_r.get("check_id"))
-            table[_.get("rid")][k] = str(_r.get("code"))
+            table[req.get("caseId")][k] = str(_r.get("code"))
     for _ in r:
         ci = _['caseId']
         _["code"] = table[ci].get(_["qc_id"], '') if ci in table else ''
