@@ -49,4 +49,4 @@ class MySQLHelper:
             conn.close()
 
 
-mysql = MySQLHelper(port=13306, database='lishui_qc', user="root", password="123456")
+mysql = MySQLHelper()

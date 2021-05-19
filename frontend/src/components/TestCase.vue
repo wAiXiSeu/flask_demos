@@ -63,7 +63,63 @@
     </el-row>
     <el-row :gutter="20">
       <el-col :span="12">
-        <div v-html="showEmr" style="height: 600px; overflow: auto;"></div>
+        <el-tabs type="card" v-if="mr_front_sheet_flag" v-model="focus_tab" style="height:600px;">
+          <el-tab-pane label="基础信息" name="first">
+            <el-table
+              :data="showEmr[0]"
+              border
+              style="width: 100%"
+              height="600">
+              <el-table-column
+                v-for="item in [
+            {label: 'name', prop: 'name0'},
+            {label: 'value', prop: 'value0'},
+            {label: 'name', prop: 'name1'},
+            {label: 'value', prop: 'value1'},
+            {label: 'name', prop: 'name2'},
+            {label: 'value', prop: 'value2'},
+            {label: 'name', prop: 'name3'},
+            {label: 'value', prop: 'value3'}
+            ]"
+                :prop="item.prop"
+                :label="item.label"
+
+                width="180">
+              </el-table-column>
+            </el-table>
+          </el-tab-pane>
+          <el-tab-pane label="诊断信息" name="second">
+            <el-table
+              :data="showEmr[1]"
+              v-if="showEmr[1].length"
+              border
+              style="width: 100%"
+              height="600">
+              <el-table-column
+                v-for="(value, key) in showEmr[1][0]"
+                :prop="key"
+                :label="key"
+                width="180">
+              </el-table-column>
+            </el-table>
+          </el-tab-pane>
+          <el-tab-pane label="手术信息" name="third">
+            <el-table
+              :data="showEmr[2]"
+              v-if="showEmr[2].length"
+              border
+              style="width: 100%"
+              height="600">
+              <el-table-column
+                v-for="(value, key) in showEmr[2][0]"
+                :prop="key"
+                :label="key"
+                width="180">
+              </el-table-column>
+            </el-table>
+          </el-tab-pane>
+        </el-tabs>
+        <div v-if="!mr_front_sheet_flag" v-html="showEmr" style="height: 600px; overflow: auto;"></div>
       </el-col>
       <el-col :span="12">
         <el-table
@@ -147,6 +203,8 @@
         currentPage: 1,
         onlyConflictCase: false, // 是否只显示质控结果和医生判断不一致的点
         SERVICE_URL,
+        mr_front_sheet_flag: false,
+        focus_tab: "first",
       }
     },
 
@@ -160,6 +218,7 @@
         this.toolTipText = "";
         this.caseIds = [];
         this.qcResults = [];
+        this.mr_front_sheet_flag = false;
         axios.get(`${SERVICE_URL.testCases.list_caseId}?hospital=lishui`).then((response) => {
           if (response.status === 200 && response.data.code === 20000) {
             for (let d of response.data.data) {
@@ -184,6 +243,7 @@
         this.docNames = [];
         this.toolTipText = "";
         this.qcResults = [];
+        this.mr_front_sheet_flag = false;
         axios.get(`${SERVICE_URL.testCases.get_emr}?caseId=${this.selectedCaseId}`).then((response) => {
           if (response.status === 200 && response.data.code === 20000) {
             this.emrRecords = response.data.data.emr;
@@ -206,7 +266,39 @@
         this.showEmr = "";
         for (let i of this.emrRecords) {
           if (i.docId === this.selectedDocId) {
-            this.showEmr = i.htmlContent instanceof Object ? i.htmlContent : i.htmlContent.replace('background-color:white;', '');
+            if (i.htmlContent instanceof Object){
+              this.mr_front_sheet_flag = true;
+              let base_buffer = [];
+              let ODS_HP_BASE = i.htmlContent.ODS_HP_BASE;
+              let counter = 0;
+              let tmp = {};
+              for (let tt in ODS_HP_BASE){
+                if (counter % 4 != 0){
+                  tmp["name"+counter % 4] = tt;
+                  tmp["value"+counter % 4] = ODS_HP_BASE[tt];
+                }else{
+                  if (Object.keys(tmp).length>0) {
+                    base_buffer.push(tmp);
+                  }
+                  tmp = {};
+                  tmp["name"+counter % 4] = tt;
+                  tmp["value"+counter % 4] = ODS_HP_BASE[tt];
+                }
+                counter ++;
+              }
+              if (Object.keys(tmp).length>0){
+                base_buffer.push(tmp)
+              }
+              let diag_buffer = i.htmlContent.ODS_HP_DIAG;
+              let surg_buffer = i.htmlContent.ODS_HP_SURG;
+              this.showEmr=[base_buffer, diag_buffer, surg_buffer];
+              debugger;
+            }else{
+              this.mr_front_sheet_flag = false;
+              this.showEmr = i.htmlContent.replace('background-color:white;', '');
+            }
+            console.log(i.htmlContent);
+
           }
         }
       },

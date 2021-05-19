@@ -20,7 +20,7 @@ db = MongoClient(host=os.getenv("MONGO_HOST", "localhost"),
 mysql = pymysql.connect(host=os.getenv("MYSQL_HOST", "localhost"),
                         port=int(os.getenv("MYSQL_PORT", "3306")),
                         user=os.getenv("MYSQL_USER", "root"),
-                        password=os.getenv("MYSQL_PASS", "123456"), db="syf", charset="utf8")
+                        password=os.getenv("MYSQL_PASSWORD", "123456"), db=os.getenv("MYSQL_DB", "shaoyifu_qc"), charset="utf8")
 
 
 def get_emr_list(collection_name):
