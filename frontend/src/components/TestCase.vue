@@ -397,6 +397,10 @@
         this.currentPage = 1;
         this.testCaseFilterData = this.testCaseTotalData.filter(data => !this.testCaseKeyWord ||
           data.qc_id.toLowerCase().includes(this.testCaseKeyWord.toLowerCase()));
+        if (this.onlyConflictCase) {
+          this.testCaseFilterData = this.testCaseFilterData.filter(data => data.code !== "" &&
+            ((data.code !== "2" && data.doctor_result === "错") || (data.code === "2" && data.doctor_result === "对")));
+        }
         this.testCaseTableData = this.testCaseFilterData.slice(20 * (this.currentPage-1),20* this.currentPage);
       },
 
@@ -429,14 +433,7 @@
         this.getDetails();
       },
       onlyConflictCase() {
-        this.currentPage = 1;
-        if (this.onlyConflictCase) {
-          this.testCaseFilterData = this.testCaseTotalData.filter(data => data.code !== "" &&
-            ((data.code !== "2" && data.doctor_result === "错") || (data.code !== "1" && data.doctor_result === "对")));
-          this.testCaseTableData = this.testCaseFilterData.slice(20 * (this.currentPage-1),20* this.currentPage);
-        }else{
-          this.searchTestCase();
-        }
+        this.searchTestCase();
       },
     },
 
