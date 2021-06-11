@@ -10,19 +10,13 @@ from flask_cors import CORS
 
 from controller.tz_emr_controller import tz_emr
 from core.web_utils import create_app, api_response
-from controller.docker_controller import docker_operates
-from controller.emr_controller import emr
-from controller.qc_debug_controller import qc_debug
 from controller.test_case_controller import test_case
 from core.cache import init as cache_init
 
 app = create_app()
 cache_init(app)
 CORS(app)
-app.register_blueprint(docker_operates, url_prefix="/docker")
-app.register_blueprint(qc_debug, url_prefix="/qc")
 app.register_blueprint(test_case, url_prefix="/cases")
-app.register_blueprint(emr, url_prefix="/syf")
 app.register_blueprint(tz_emr, url_prefix="/tz")
 
 

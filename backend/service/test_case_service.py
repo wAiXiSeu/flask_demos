@@ -6,6 +6,7 @@ __author__ = 'wAIxi'
 __date__ = '2021/4/29'
 __description__ = doc description
 """
+import os
 from collections import defaultdict
 from datetime import datetime
 from urllib.parse import quote
@@ -146,14 +147,14 @@ def download_test_data():
 
 @cache.memoize(timeout=24*60*60)
 def get_doctor_result(case_id, qc_id: str):
-    sql = "select * from DoctorResult where 1=1"
+    sql = "select * from doctorResult_all where hospital='溧水'"
     if case_id:
-        sql += f" and caseId='{case_id}'"
+        sql += f" and case_id='{case_id}'"
     if qc_id:
         sql += f" and qc_id='{qc_id.upper()}'"
     sql += ";"
     r = mysql.query(sql=sql)
-    case_ids = list(set([_.get("caseId") for _ in r]))
+    case_ids = list(set([_.get("case_id") for _ in r]))
     t = qc_collection.find({"request.caseId": {"$in": case_ids}})
     table = defaultdict(dict)
     for _ in t:
@@ -163,6 +164,6 @@ def get_doctor_result(case_id, qc_id: str):
             k = _fmt_check_id(_r.get("check_id"))
             table[req.get("caseId")][k] = str(_r.get("code"))
     for _ in r:
-        ci = _['caseId']
+        ci = _['case_id']
         _["code"] = table[ci].get(_["qc_id"], '') if ci in table else ''
     return r

@@ -40,9 +40,9 @@
                     :data="testCaseTableData"
                     :row-class-name="testCaseStatus"
                     :default-sort = "{prop: 'qc_id', order: 'ascending'}">
-            <el-table-column property="caseId" label="caseId" width="150">
+            <el-table-column property="case_id" label="case_id" width="150">
               <template slot-scope="{row}">
-                <el-link @click="selectedCaseId = row.caseId; showTestCaseTable=false">{{row.caseId}}</el-link>
+                <el-link @click="selectedCaseId = row.case_id; showTestCaseTable=false">{{row.case_id}}</el-link>
               </template>
             </el-table-column>
             <el-table-column property="qc_id" label="质控点编号" width="200"></el-table-column>
@@ -83,6 +83,7 @@
             ]"
                 :prop="item.prop"
                 :label="item.label"
+                :key="item.prop"
 
                 width="180">
               </el-table-column>
@@ -99,6 +100,7 @@
                 v-for="(value, key) in showEmr[1][0]"
                 :prop="key"
                 :label="key"
+                :key="key"
                 width="180">
               </el-table-column>
             </el-table>
@@ -112,6 +114,7 @@
               height="600">
               <el-table-column
                 v-for="(value, key) in showEmr[2][0]"
+                :key="key"
                 :prop="key"
                 :label="key"
                 width="180">
