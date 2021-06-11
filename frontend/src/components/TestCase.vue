@@ -166,7 +166,7 @@
             prop="doctor_result"
             label="医生判断"
             width="100"
-            :filters="[{ text: '错', value: '错' }, { text: '对', value: '对'}, { text: '无', value: '无'}]"
+            :filters="[{ text: '报警', value: '报警' }, { text: '不报警', value: '不报警'}, { text: '无', value: '无'}]"
             :filter-method="filterDoctorResult">
             <template slot-scope="scope">
               <el-tag
@@ -381,9 +381,9 @@
       },
 
       changeStatusView(status) {
-        if (status === '对') {
+        if (status === '不报警') {
           return 'warning'
-        } else if (status === '错') {
+        } else if (status === '报警') {
           return 'success'
         } else {
           return 'info'
@@ -402,7 +402,7 @@
           data.qc_id.toLowerCase().includes(this.testCaseKeyWord.toLowerCase()));
         if (this.onlyConflictCase) {
           this.testCaseFilterData = this.testCaseFilterData.filter(data => data.code !== "" &&
-            ((data.code !== "2" && data.doctor_result === "错") || (data.code === "2" && data.doctor_result === "对")));
+            ((data.code !== "2" && data.doctor_result === "报警") || (data.code === "2" && data.doctor_result === "不报警")));
         }
         this.testCaseTableData = this.testCaseFilterData.slice(20 * (this.currentPage-1),20* this.currentPage);
       },
@@ -411,8 +411,8 @@
         if (row.code === '') {
           return ''
         }
-        if ((row.code !== "2" && row.doctor_result === '错')
-          || (row.code !== "1" && row.doctor_result === '对')) {
+        if ((row.code !== "2" && row.doctor_result === '报警')
+          || (row.code !== "1" && row.doctor_result === '不报警')) {
           return 'warning-row';
         }
         return '';
